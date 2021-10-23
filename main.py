@@ -1,6 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
 import json
+import csv
 
 
 def get_data():
@@ -24,7 +25,7 @@ def get_data():
     data_bit = []
     data_bonds = []
     count = 1
-
+    log = open("logs/logs.txt", "a", encoding="utf-8")
     for link in list_link:  # проходимся по страницам фондов и забираем данные
         """ забираем код страницы и записываем его в файл, чтобы не беспокоить лишний раз сайт """
         # req = requests.get(link, headers=headers)
@@ -62,11 +63,10 @@ def get_data():
                 second_table_dict["Валюта фонда"] = second_table[6].text
                 second_table_dict["Волатильность"] = second_table[12].text
                 data_bonds.append(second_table_dict)
-            print(f"Complete {count} step ({link[-4:]}.html)")
+            log.write(f"Complete {count} step ({link[-4:]}.html)\n")
             count += 1
         except AttributeError:
-            print(f"Error in file {link[-4:]}.html. Don't found class")
-
+            log.write(f"Error in file {link[-4:]}.html. Don't found class\n")
     with open("data_etf_bits.json", "w", encoding="utf-8") as f:
         json.dump(data_bit, f, indent=4, ensure_ascii=False)
     with open("data_etf_bonds.json", "w", encoding="utf-8") as f:
